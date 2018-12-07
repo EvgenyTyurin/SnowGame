@@ -1,6 +1,9 @@
 package com.evgenyt.snowgame.sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -13,6 +16,7 @@ public class ScreenObject {
     private Texture texture;
     private String text;
     private float x, y, velocityY, velocityX;
+    private BitmapFont font;
 
     // New object with img and text
     public ScreenObject(String textureFile, float x, float y, String text) {
@@ -21,6 +25,8 @@ public class ScreenObject {
         this.text = text;
         this.x = x;
         this.y = y;
+        font = new BitmapFont(Gdx.files.internal("verdana.fnt"));
+        font.setColor(Color.WHITE);
     }
 
     // New object with img only
@@ -30,13 +36,15 @@ public class ScreenObject {
 
     // New object with text only
     public ScreenObject(float x, float y, String text) {
-        this("", x, y, "");
+        this("", x, y, text);
     }
 
     // Draw object texture on screen
     public void draw(SpriteBatch spriteBatch) {
         if (texture != null)
             spriteBatch.draw(texture, x, y);
+        if (text != null && !text.equals(""))
+            font.draw(spriteBatch, text, x, y);
     }
 
     // Update object position
@@ -106,5 +114,9 @@ public class ScreenObject {
 
     public void setX(float x) {
         this.x = x;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

@@ -23,7 +23,7 @@ public class GameUtils {
 
     // Random x-coordinate
     public static float getRandomX() {
-        return random.nextFloat() * getScreenWidth();
+        return 50 + random.nextFloat() * (getScreenWidth() - 100);
     }
 
     // Convert Y screen coordinate upside down

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.GameUtils;
 import com.evgenyt.snowgame.sprites.Glove;
 import com.evgenyt.snowgame.sprites.ScreenObject;
+import com.evgenyt.snowgame.sprites.ScreenLabel;
 import com.evgenyt.snowgame.sprites.SnowFlake;
 
 import java.util.ArrayList;
@@ -16,17 +17,23 @@ import java.util.Iterator;
 
 public class PlayState extends GameState {
 
-    private static float GRAVITY = -100;
-    private static float SNOW_DENSITY = 0.99f;
+    private static float GRAVITY = -70;
+    private static int MAX_FLAKES = 4;
+    private static int FLAKES_PAUSE = 100;
+    private static int FLAKES_TIMER = FLAKES_PAUSE;
+    private static int SCORE = 0;
 
-    private static ArrayList<ScreenObject> screenObjects;
+    private static ArrayList<SnowFlake> snowFlakes;
     private static Glove playerGlove;
+    private static ScreenLabel scoreLabel;
 
     // New game
     public PlayState(GameStateManager manager) {
         super(manager);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
-        screenObjects = new ArrayList<>();
+        scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 250,
+                GameUtils.getScreenHeight(),  "SCORE: " + SCORE);
+        snowFlakes = new ArrayList<>();
     }
 
     // Handle user input actions
@@ -40,7 +47,7 @@ public class PlayState extends GameState {
         float touchX = Gdx.input.getX();
         float touchY = GameUtils.flipY(Gdx.input.getY());
 
-        playerGlove.setX(touchX);
+        playerGlove.setX(touchX - playerGlove.getWidth() / 2);
 
     }
 
@@ -48,23 +55,38 @@ public class PlayState extends GameState {
     @Override
     public void update(float deltaTime) {
         // Manage screen objects
-        Iterator<ScreenObject> objectIterator = screenObjects.iterator();
+        Iterator<SnowFlake> objectIterator = snowFlakes.iterator();
         while (objectIterator.hasNext()) {
-            ScreenObject screenObject = objectIterator.next();
-            screenObject.update(deltaTime);
-            if (screenObject.getY() < -1 * screenObject.getHeight()) {
-                screenObject.dispose();
+            SnowFlake snowFlake = objectIterator.next();
+            snowFlake.update(deltaTime);
+            if (snowFlake.getY() < -1 * snowFlake.getHeight()) {
+                snowFlake.dispose();
                 objectIterator.remove();
+                setScore(0);
+                GRAVITY = -70;
+                MAX_FLAKES = 4;
+                FLAKES_PAUSE = 100;
             } else
-            if (screenObject.collides(playerGlove)) {
-                screenObject.dispose();
+            if (snowFlake.collides(playerGlove)) {
+                snowFlake.dispose();
                 objectIterator.remove();
+                SCORE++;
+                setScore(SCORE);
+                if (SCORE % 2 == 0) {
+                    MAX_FLAKES++;
+                    GRAVITY--;
+                    FLAKES_PAUSE--;
+                }
             }
         }
         // Make more snow
-        if (GameUtils.random.nextFloat() > SNOW_DENSITY) {
-            screenObjects.add(new SnowFlake(GameUtils.getRandomX(),
-                    GameUtils.getScreenHeight(), GRAVITY));
+        if (snowFlakes.size() < MAX_FLAKES && FLAKES_TIMER > FLAKES_PAUSE) {
+            snowFlakes.add(new SnowFlake(GameUtils.getRandomX(),
+                    GameUtils.getScreenHeight(),
+                    GRAVITY));
+            FLAKES_TIMER = 0;
+        } else {
+            FLAKES_TIMER ++;
         }
         handleInput();
     }
@@ -74,19 +96,27 @@ public class PlayState extends GameState {
     public void render(SpriteBatch spriteBatch) {
         // Sprite tool draw cycle begin
         spriteBatch.begin();
-        for (ScreenObject screenObject : screenObjects)
-            screenObject.draw(spriteBatch);
+        for (SnowFlake snowFlake : snowFlakes)
+            snowFlake.draw(spriteBatch);
         playerGlove.draw(spriteBatch);
+        scoreLabel.draw(spriteBatch);
         // Sprite tool draw cycle end
         spriteBatch.end();
+    }
+
+    // Update game score
+    private void setScore(int score) {
+        SCORE = score;
+        scoreLabel.setText("SCORE: " + score);
     }
 
     // Exit game
     @Override
     public void dispose() {
-        for (ScreenObject screenObject : screenObjects)
+        for (ScreenObject screenObject : snowFlakes)
             screenObject.dispose();
-
+        playerGlove.dispose();
+        scoreLabel.dispose();
     }
 
 }
