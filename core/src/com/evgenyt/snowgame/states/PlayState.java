@@ -9,6 +9,7 @@ import com.evgenyt.snowgame.sprites.Glove;
 import com.evgenyt.snowgame.sprites.ScreenObject;
 import com.evgenyt.snowgame.sprites.ScreenLabel;
 import com.evgenyt.snowgame.sprites.SnowFlake;
+import com.evgenyt.snowgame.sprites.Wand;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,13 +126,16 @@ public class PlayState extends GameState {
             gift.update(deltaTime);
             if (gift.collides(playerGlove)) {
                 // + 1 life
-                if(gift instanceof Glove)
+                if(gift instanceof Glove) {
                     setLives(++LIVES);
+                } else
                 if (gift instanceof GiftBox) {
                     SCORE += 10;
                     setScore(SCORE);
+                } else
+                if (gift instanceof Wand) {
+                    physicsReset();
                 }
-
                 gift.dispose();
                 gift = null;
             }
@@ -159,19 +163,22 @@ public class PlayState extends GameState {
                 setScore(++SCORE);
                 // Make game harder
                 GRAVITY--;
-                if (SCORE % 2 == 0) {
+                if (SCORE % 4 == 0) {
                     FLAKES_PAUSE--;
                     MAX_FLAKES++;
                 }
                 // Make a gift
                 if (SCORE % 100 == 0) {
-                    switch (GameUtils.random.nextInt(2)) {
+                    switch (GameUtils.random.nextInt(3)) {
                         case 0: gift = new Glove(GameUtils.getRandomX(),
                                     GameUtils.getScreenHeight());
                                 break;
                         case 1: gift = new GiftBox(GameUtils.getRandomX(),
                                 GameUtils.getScreenHeight());
                                 break;
+                        case 2: gift = new Wand(GameUtils.getRandomX(),
+                                GameUtils.getScreenHeight());
+                            break;
                     }
                     gift.setVelocityY(GRAVITY * 2);
                 }
