@@ -17,23 +17,48 @@ import java.util.Iterator;
 
 public class PlayState extends GameState {
 
-    private static float GRAVITY = -70;
-    private static int MAX_FLAKES = 4;
-    private static int FLAKES_PAUSE = 100;
-    private static int FLAKES_TIMER = FLAKES_PAUSE;
-    private static int SCORE = 0;
+    // Game "physics" parameters
+    private static float GRAVITY;
+    private static int MAX_FLAKES;
+    private static int FLAKES_PAUSE;
+    private static int FLAKES_TIMER;
+    private static boolean GAME_OVER = false;
 
+    // Game score
+    private static int SCORE;
+
+    // Sprites on a screen
     private static ArrayList<SnowFlake> snowFlakes;
     private static Glove playerGlove;
     private static ScreenLabel scoreLabel;
+    private static ScreenLabel gameOverLabel;
 
-    // New game
+    // Game start
     public PlayState(GameStateManager manager) {
         super(manager);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
-        scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 250,
+        scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
                 GameUtils.getScreenHeight(),  "SCORE: " + SCORE);
+        gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
+                GameUtils.getCenterY() + 30, "GAME OVER");
         snowFlakes = new ArrayList<>();
+        newGame();
+    }
+
+    // Game start/restart
+    private void newGame() {
+        setScore(0);
+        GRAVITY = GameUtils.getStartGravity();
+        MAX_FLAKES = 4;
+        FLAKES_PAUSE = 100;
+        FLAKES_TIMER = FLAKES_PAUSE;
+        playerGlove.setX(GameUtils.getCenterX());
+        Iterator<SnowFlake> objectIterator = snowFlakes.iterator();
+        while (objectIterator.hasNext()) {
+            SnowFlake snowFlake = objectIterator.next();
+            snowFlake.dispose();
+            objectIterator.remove();
+        }
     }
 
     // Handle user input actions
@@ -42,10 +67,14 @@ public class PlayState extends GameState {
         // If nothing pressed - exit
         if (!Gdx.input.justTouched())
             return;
-
+        if (GAME_OVER) {
+            GAME_OVER = false;
+            newGame();
+            return;
+        }
         // Get X and Y of user click
         float touchX = Gdx.input.getX();
-        float touchY = GameUtils.flipY(Gdx.input.getY());
+        // float touchY = GameUtils.flipY(Gdx.input.getY());
 
         playerGlove.setX(touchX - playerGlove.getWidth() / 2);
 
@@ -54,18 +83,16 @@ public class PlayState extends GameState {
     // Update screen
     @Override
     public void update(float deltaTime) {
+        handleInput();
+        if (GAME_OVER)
+            return;
         // Manage screen objects
         Iterator<SnowFlake> objectIterator = snowFlakes.iterator();
         while (objectIterator.hasNext()) {
             SnowFlake snowFlake = objectIterator.next();
             snowFlake.update(deltaTime);
             if (snowFlake.getY() < -1 * snowFlake.getHeight()) {
-                snowFlake.dispose();
-                objectIterator.remove();
-                setScore(0);
-                GRAVITY = -70;
-                MAX_FLAKES = 4;
-                FLAKES_PAUSE = 100;
+                GAME_OVER = true;
             } else
             if (snowFlake.collides(playerGlove)) {
                 snowFlake.dispose();
@@ -88,7 +115,6 @@ public class PlayState extends GameState {
         } else {
             FLAKES_TIMER ++;
         }
-        handleInput();
     }
 
     // Render screen
@@ -100,6 +126,8 @@ public class PlayState extends GameState {
             snowFlake.draw(spriteBatch);
         playerGlove.draw(spriteBatch);
         scoreLabel.draw(spriteBatch);
+        if (GAME_OVER)
+            gameOverLabel.draw(spriteBatch);
         // Sprite tool draw cycle end
         spriteBatch.end();
     }

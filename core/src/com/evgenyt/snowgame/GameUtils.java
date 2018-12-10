@@ -17,11 +17,21 @@ public class GameUtils {
     // Random generator
     public static Random random = new Random();
 
+    // Initial gravity depends of screen height
+    public static float getStartGravity() {
+        return -70 * getDesktopScreenHeight() / 500;
+    }
+
+
+    // Get center of the screen y-coordinate
+    public static float getCenterY() {return getScreenHeight() / 2;}
+
+    // Get center of the screen x-coordinate
     public static float getCenterX() {
         return getScreenWidth() / 2;
     }
 
-    // Random x-coordinate
+    // Random x-coordinate with padding
     public static float getRandomX() {
         return 50 + random.nextFloat() * (getScreenWidth() - 100);
     }
