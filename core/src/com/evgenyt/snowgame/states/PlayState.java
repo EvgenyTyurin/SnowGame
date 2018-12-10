@@ -117,14 +117,13 @@ public class PlayState extends GameState {
             snowFlake.update(deltaTime);
             // Snowflake on the ground
             if (snowFlake.getY() < -1 * snowFlake.getHeight()) {
-                snowFlake.dispose();
-                objectIterator.remove();
                 setLives(--LIVES);
                 // Game over, men. Game over.
                 if (LIVES <= 0)
                     GAME_OVER = true;
                 else
                     killSnow();
+                break;
             } else
             // Snowflake cached
             if (snowFlake.collides(playerGlove)) {
