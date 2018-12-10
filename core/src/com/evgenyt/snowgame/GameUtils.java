@@ -19,9 +19,8 @@ public class GameUtils {
 
     // Initial gravity depends of screen height
     public static float getStartGravity() {
-        return -70 * getDesktopScreenHeight() / 500;
+        return -70 * getScreenHeight() / 500;
     }
-
 
     // Get center of the screen y-coordinate
     public static float getCenterY() {return getScreenHeight() / 2;}
