@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.evgenyt.snowgame.GameUtils;
 
 /**
  * Game screen object
@@ -20,12 +21,16 @@ public class ScreenObject {
 
     // New object with img and text
     public ScreenObject(String textureFile, float x, float y, String text) {
-        if (textureFile != null && !textureFile.equals(""))
+
+        if (textureFile != null && !textureFile.equals("")) {
+            if (GameUtils.getScreenHeight() > 500)
+                textureFile = GameUtils.getTextureDir() + textureFile;
             this.texture = new Texture(textureFile);
+        }
         this.text = text;
         this.x = x;
         this.y = y;
-        font = new BitmapFont(Gdx.files.internal("verdana.fnt"));
+        font = new BitmapFont(Gdx.files.internal(GameUtils.getTextureDir() + "verdana.fnt"));
         font.setColor(Color.WHITE);
     }
 
@@ -51,6 +56,8 @@ public class ScreenObject {
     public void update(float dt) {
         y += velocityY * dt;
         x += velocityX * dt;
+        if (y < 0)
+            dispose();
     }
 
     // Object height

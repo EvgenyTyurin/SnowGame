@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.GameUtils;
+import com.evgenyt.snowgame.sprites.GiftBox;
 import com.evgenyt.snowgame.sprites.Glove;
 import com.evgenyt.snowgame.sprites.ScreenObject;
 import com.evgenyt.snowgame.sprites.ScreenLabel;
@@ -23,12 +24,12 @@ public class PlayState extends GameState {
     private static int MAX_FLAKES;
     private static int FLAKES_PAUSE;
     private static int FLAKES_TIMER;
-    private static boolean GAME_OVER = false;
 
     // Game score
     private static int SCORE;
     private static int HIGH_SCORE;
     private static int LIVES;
+    private static boolean GAME_OVER;
 
     // Prefs storage
     Preferences prefs;
@@ -36,34 +37,35 @@ public class PlayState extends GameState {
     // Sprites on a screen
     private static ArrayList<SnowFlake> snowFlakes;
     private static Glove playerGlove;
+    private static ScreenObject gift;
     private static ScreenLabel scoreLabel;
     private static ScreenLabel highScoreLabel;
     private static ScreenLabel gameOverLabel;
     private static ScreenLabel livesLabel;
 
-    // Game start
+    // Game window create
     public PlayState(GameStateManager manager) {
         super(manager);
+        // Saved data storage init
+        prefs = Gdx.app.getPreferences("prefs");
+        // Sprites init
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
         scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
                 GameUtils.getScreenHeight(),  "SCORE: " + SCORE);
         highScoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
-                GameUtils.getScreenHeight() - 50,  "TOP: " + HIGH_SCORE);
+                GameUtils.getScreenHeight() - 50,  "TOP: " + readHighScore());
         gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
                 GameUtils.getCenterY() + 30, "GAME OVER");
         livesLabel = new ScreenLabel(0,
                 GameUtils.getScreenHeight(), "LIVES: " + LIVES);
         snowFlakes = new ArrayList<>();
-        prefs = Gdx.app.getPreferences("prefs");
+        // Start new game
         newGame();
     }
 
     // Game start/restart
     private void newGame() {
-        GRAVITY = GameUtils.getStartGravity();
-        MAX_FLAKES = 4;
-        FLAKES_PAUSE = 100;
-        FLAKES_TIMER = FLAKES_PAUSE;
+        physicsReset();
         playerGlove.setX(GameUtils.getCenterX());
         killSnow();
         if (SCORE > HIGH_SCORE) {
@@ -72,6 +74,15 @@ public class PlayState extends GameState {
         setHighScore(readHighScore());
         setScore(0);
         setLives(3);
+        GAME_OVER = false;
+    }
+
+    // Set initial physics settings
+    private void physicsReset() {
+        GRAVITY = GameUtils.getStartGravity();
+        MAX_FLAKES = 4;
+        FLAKES_PAUSE = 100;
+        FLAKES_TIMER = FLAKES_PAUSE;
     }
 
     // Destroy all snow flakes
@@ -92,7 +103,6 @@ public class PlayState extends GameState {
             return;
         // If game over - start new game
         if (GAME_OVER) {
-            GAME_OVER = false;
             newGame();
             return;
         }
@@ -110,6 +120,22 @@ public class PlayState extends GameState {
         handleInput();
         if (GAME_OVER)
             return;
+        // Manage gift
+        if (gift != null) {
+            gift.update(deltaTime);
+            if (gift.collides(playerGlove)) {
+                // + 1 life
+                if(gift instanceof Glove)
+                    setLives(++LIVES);
+                if (gift instanceof GiftBox) {
+                    SCORE += 10;
+                    setScore(SCORE);
+                }
+
+                gift.dispose();
+                gift = null;
+            }
+        }
         // Manage snow flakes
         Iterator<SnowFlake> objectIterator = snowFlakes.iterator();
         while (objectIterator.hasNext()) {
@@ -122,6 +148,7 @@ public class PlayState extends GameState {
                 if (LIVES <= 0)
                     GAME_OVER = true;
                 else
+                    physicsReset();
                     killSnow();
                 break;
             } else
@@ -135,6 +162,18 @@ public class PlayState extends GameState {
                 if (SCORE % 2 == 0) {
                     FLAKES_PAUSE--;
                     MAX_FLAKES++;
+                }
+                // Make a gift
+                if (SCORE % 100 == 0) {
+                    switch (GameUtils.random.nextInt(2)) {
+                        case 0: gift = new Glove(GameUtils.getRandomX(),
+                                    GameUtils.getScreenHeight());
+                                break;
+                        case 1: gift = new GiftBox(GameUtils.getRandomX(),
+                                GameUtils.getScreenHeight());
+                                break;
+                    }
+                    gift.setVelocityY(GRAVITY * 2);
                 }
             }
         }
@@ -156,6 +195,8 @@ public class PlayState extends GameState {
         spriteBatch.begin();
         for (SnowFlake snowFlake : snowFlakes)
             snowFlake.draw(spriteBatch);
+        if (gift != null)
+            gift.draw(spriteBatch);
         playerGlove.draw(spriteBatch);
         scoreLabel.draw(spriteBatch);
         highScoreLabel.draw(spriteBatch);

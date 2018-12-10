@@ -11,11 +11,18 @@ import java.util.Random;
 public class GameUtils {
 
     // Game window properties used in Desktop test launcher
-    private static final int DESKTOP_SCREEN_WIDTH = 1000;
-    private static final int DESKTOP_SCREEN_HEIGHT = 500;
+    public static final int DESKTOP_SCREEN_WIDTH = 1280;
+    public static final int DESKTOP_SCREEN_HEIGHT = 720;
 
     // Random generator
     public static Random random = new Random();
+
+    // Directory with textures and fonts depends on screen size
+    public static String getTextureDir() {
+        if (getScreenHeight() > 1000)
+            return "big/";
+        return "normal/";
+    }
 
     // Initial gravity depends of screen height
     public static float getStartGravity() {
@@ -38,14 +45,6 @@ public class GameUtils {
     // Convert Y screen coordinate upside down
     public static float flipY(float y) {
         return getScreenHeight() - 1 - y;
-    }
-
-    public static int getDesktopScreenWidth() {
-        return DESKTOP_SCREEN_WIDTH;
-    }
-
-    public static int getDesktopScreenHeight() {
-        return DESKTOP_SCREEN_HEIGHT;
     }
 
     public static float getScreenWidth() {
