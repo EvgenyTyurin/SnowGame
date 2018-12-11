@@ -1,9 +1,9 @@
 package com.evgenyt.snowgame.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.GameUtils;
+import com.evgenyt.snowgame.sprites.Button;
 import com.evgenyt.snowgame.sprites.GiftBox;
 import com.evgenyt.snowgame.sprites.Glove;
 import com.evgenyt.snowgame.sprites.ScreenObject;
@@ -36,9 +36,6 @@ public class PlayState extends GameState {
     private static int LIVES;
     private static boolean GAME_OVER;
 
-    // Prefs storage
-    private static  Preferences prefs;
-
     // Sprites on a screen
     private static ArrayList<SnowFlake> snowFlakes;
     private static Glove playerGlove;
@@ -48,12 +45,11 @@ public class PlayState extends GameState {
     private static ScreenLabel highScoreLabel;
     private static ScreenLabel gameOverLabel;
     private static ScreenLabel livesLabel;
+    private static Button backButton;
 
     // Game window create
     public PlayState(GameStateManager manager) {
         super(manager);
-        // Saved data storage init
-        prefs = Gdx.app.getPreferences("prefs");
         // Sprites init
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
         scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
@@ -62,8 +58,9 @@ public class PlayState extends GameState {
                 GameUtils.getScreenHeight() - 50,  "TOP: " + readHighScore());
         gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
                 GameUtils.getCenterY() + 30, "GAME OVER");
-        livesLabel = new ScreenLabel(0,
+        livesLabel = new ScreenLabel(310,
                 GameUtils.getScreenHeight(), "LIVES: " + LIVES);
+        backButton = new Button(10, GameUtils.getScreenHeight() - 60, "<- Back");
         snowFlakes = new ArrayList<>();
         // Start new game
         newGame();
@@ -117,17 +114,21 @@ public class PlayState extends GameState {
         // If nothing pressed - exit
         if (!Gdx.input.justTouched())
             return;
-        // If game over - start new game
+        // If game over - go main menu
         if (GAME_OVER) {
-            newGame();
-            return;
+            dispose();
+            getStateManager().pop();
         }
         // Get X and Y of user click
         float touchX = Gdx.input.getX();
-        // float touchY = GameUtils.flipY(Gdx.input.getY());
-
+        float touchY = GameUtils.flipY(Gdx.input.getY());
+        // Exit to main menu
+        if (backButton.getBounds().contains(touchX, touchY)) {
+            dispose();
+            getStateManager().pop();
+        }
+        // Move player glove
         playerGlove.setX(touchX - playerGlove.getWidth() / 2);
-
     }
 
     // Update screen
@@ -228,6 +229,7 @@ public class PlayState extends GameState {
         scoreLabel.draw(spriteBatch);
         highScoreLabel.draw(spriteBatch);
         livesLabel.draw(spriteBatch);
+        backButton.draw(spriteBatch);
         if (GAME_OVER)
             gameOverLabel.draw(spriteBatch);
         // Sprite tool draw cycle end
@@ -242,26 +244,34 @@ public class PlayState extends GameState {
 
     // Update game score
     private void addScore(int delta) {
-        if (prize != null) {
-            prize.setY(prize.getY() + delta * 10);
-            if (prize.getY() >= 0)
-                newPrize();
-        }
         SCORE += delta;
         scoreLabel.setText("SCORE: " + SCORE);
+        if (prize != null) {
+            prize.setY(prize.getY() + delta * GameUtils.getPrizeDeltaY());
+            if (prize.getY() >= 0) {
+                if (prize instanceof Snowman) {
+                    GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNOWMAN,
+                            GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0) + 1);
+                    GameUtils.prefs.flush();
+                }
+                getStateManager().push(new PrizeState(getStateManager()));
+                newPrize();
+            }
+
+        }
     }
 
     // Update game high score
     private void setHighScore(int score) {
         HIGH_SCORE = score;
         highScoreLabel.setText("TOP: " + score);
-        prefs.putInteger("HIGH_SCORE", score);
-        prefs.flush();
+        GameUtils.prefs.putInteger("HIGH_SCORE", score);
+        GameUtils.prefs.flush();
     }
 
     // Get top score from prefs
     private int readHighScore() {
-        return prefs.getInteger("HIGH_SCORE", 0);
+        return GameUtils.prefs.getInteger("HIGH_SCORE", 0);
     }
 
     // Exit game
@@ -273,6 +283,7 @@ public class PlayState extends GameState {
         highScoreLabel.dispose();
         livesLabel.dispose();
         prize.dispose();
+        backButton.dispose();
         if (gift != null)
             gift.dispose();
     }

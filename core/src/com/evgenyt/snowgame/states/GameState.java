@@ -18,7 +18,7 @@ public abstract class GameState {
     protected abstract void handleInput();
 
     // Update screen
-    public abstract void update(float deltaTime);
+    protected abstract void update(float deltaTime);
 
     // Draw screen
     public abstract void render(SpriteBatch spriteBatch);
@@ -26,7 +26,7 @@ public abstract class GameState {
     // Destroy state
     public abstract void dispose();
 
-    public GameStateManager getStateManager() {
+    GameStateManager getStateManager() {
         return stateManager;
     }
 

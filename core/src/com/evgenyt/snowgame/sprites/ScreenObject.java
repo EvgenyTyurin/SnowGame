@@ -52,6 +52,14 @@ public class ScreenObject {
             font.draw(spriteBatch, text, x, y);
     }
 
+    // Draw object texture on screen
+    public void draw(SpriteBatch spriteBatch, float w, float h) {
+        if (texture != null)
+            spriteBatch.draw(texture, x, y, w, h);
+        if (text != null && !text.equals(""))
+            font.draw(spriteBatch, text, x, y);
+    }
+
     // Update object position
     public void update(float dt) {
         y += velocityY * dt;
@@ -127,5 +135,9 @@ public class ScreenObject {
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    public BitmapFont getFont() {
+        return font;
     }
 }

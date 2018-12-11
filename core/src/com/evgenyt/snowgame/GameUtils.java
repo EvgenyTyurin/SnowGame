@@ -1,6 +1,7 @@
 package com.evgenyt.snowgame;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 
 import java.util.Random;
 
@@ -10,6 +11,9 @@ import java.util.Random;
 
 public class GameUtils {
 
+    // Development mode flag
+    public static final boolean DEVELOPMENT = false;
+
     // Game window properties used in Desktop test launcher
     public static final int DESKTOP_SCREEN_WIDTH = 1280;
     public static final int DESKTOP_SCREEN_HEIGHT = 720;
@@ -17,10 +21,26 @@ public class GameUtils {
     // Random generator
     public static Random random = new Random();
 
+    // Prefs storage
+    public static Preferences prefs = Gdx.app.getPreferences("prefs");
+
+    // Prefs keys
+    public static final String KEY_PRIZE_SNOWMAN = "PRIZE_SNOWMAN";
+
+    // Get speed of prize rising
+    public static int getPrizeDeltaY() {
+        if (DEVELOPMENT)
+            return 50;
+        else
+            return 2;
+    }
+
     // Directory with textures and fonts depends on screen size
     public static String getTextureDir() {
+        /*
         if (getScreenHeight() > 1000)
             return "big/";
+        */
         return "normal/";
     }
 

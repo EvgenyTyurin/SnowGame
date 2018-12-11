@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.states.GameStateManager;
+import com.evgenyt.snowgame.states.MainMenu;
 import com.evgenyt.snowgame.states.PlayState;
 
 /**
@@ -31,7 +32,8 @@ public class SnowGame extends ApplicationAdapter {
 
 		// Game start
 		stateManager = new GameStateManager();
-		stateManager.push(new PlayState(stateManager));
+		// stateManager.push(new PlayState(stateManager));
+		stateManager.push(new MainMenu(stateManager));
 	}
 
 	// Game render
