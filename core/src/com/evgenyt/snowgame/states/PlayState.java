@@ -9,6 +9,7 @@ import com.evgenyt.snowgame.sprites.Glove;
 import com.evgenyt.snowgame.sprites.ScreenObject;
 import com.evgenyt.snowgame.sprites.ScreenLabel;
 import com.evgenyt.snowgame.sprites.SnowFlake;
+import com.evgenyt.snowgame.sprites.Snowman;
 import com.evgenyt.snowgame.sprites.Wand;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class PlayState extends GameState {
     private static int MAX_FLAKES;
     private static int FLAKES_PAUSE;
     private static int FLAKES_TIMER;
+    private static int GIFT_PAUSE_MAX = 150;
+    private static int GIFT_PAUSE;
+    private static int GIFT_TIMER;
 
     // Game score
     private static int SCORE;
@@ -33,12 +37,13 @@ public class PlayState extends GameState {
     private static boolean GAME_OVER;
 
     // Prefs storage
-    Preferences prefs;
+    private static  Preferences prefs;
 
     // Sprites on a screen
     private static ArrayList<SnowFlake> snowFlakes;
     private static Glove playerGlove;
     private static ScreenObject gift;
+    private static ScreenObject prize;
     private static ScreenLabel scoreLabel;
     private static ScreenLabel highScoreLabel;
     private static ScreenLabel gameOverLabel;
@@ -73,9 +78,11 @@ public class PlayState extends GameState {
             setHighScore(SCORE);
         }
         setHighScore(readHighScore());
-        setScore(0);
+        SCORE = 0;
+        addScore(0);
         setLives(3);
         GAME_OVER = false;
+        newPrize();
     }
 
     // Set initial physics settings
@@ -83,7 +90,15 @@ public class PlayState extends GameState {
         GRAVITY = GameUtils.getStartGravity();
         MAX_FLAKES = 4;
         FLAKES_PAUSE = 100;
+        GIFT_PAUSE = GameUtils.random.nextInt(GIFT_PAUSE_MAX) + 10;
+        GIFT_TIMER = 0;
         FLAKES_TIMER = FLAKES_PAUSE;
+    }
+
+    private static void newPrize() {
+        if (prize != null)
+            prize.dispose();
+        prize = new Snowman(GameUtils.getScreenWidth() - 200, -380);
     }
 
     // Destroy all snow flakes
@@ -121,6 +136,7 @@ public class PlayState extends GameState {
         handleInput();
         if (GAME_OVER)
             return;
+        prize.update(deltaTime);
         // Manage gift
         if (gift != null) {
             gift.update(deltaTime);
@@ -130,8 +146,7 @@ public class PlayState extends GameState {
                     setLives(++LIVES);
                 } else
                 if (gift instanceof GiftBox) {
-                    SCORE += 10;
-                    setScore(SCORE);
+                    addScore(10);
                 } else
                 if (gift instanceof Wand) {
                     physicsReset();
@@ -160,33 +175,36 @@ public class PlayState extends GameState {
             if (snowFlake.collides(playerGlove)) {
                 snowFlake.dispose();
                 objectIterator.remove();
-                setScore(++SCORE);
+                addScore(1);
                 // Make game harder
-                GRAVITY--;
+                GRAVITY -= GameUtils.deltaGravity();
                 if (SCORE % 4 == 0) {
                     FLAKES_PAUSE--;
                     MAX_FLAKES++;
                 }
-                // Make a gift
-                if (SCORE % 100 == 0) {
+                // It's time to make a gift
+                if (GIFT_TIMER >= GIFT_PAUSE) {
+                    float giftX = GameUtils.getPlayRandomX();
+                    float giftY = GameUtils.getScreenHeight();
                     switch (GameUtils.random.nextInt(3)) {
-                        case 0: gift = new Glove(GameUtils.getRandomX(),
-                                    GameUtils.getScreenHeight());
-                                break;
-                        case 1: gift = new GiftBox(GameUtils.getRandomX(),
-                                GameUtils.getScreenHeight());
-                                break;
-                        case 2: gift = new Wand(GameUtils.getRandomX(),
-                                GameUtils.getScreenHeight());
+                        case 0: gift = new Glove(giftX, giftY);
+                            break;
+                        case 1: gift = new GiftBox(giftX, giftY);
+                            break;
+                        case 2: gift = new Wand(giftX, giftY);
                             break;
                     }
-                    gift.setVelocityY(GRAVITY * 2);
+                    gift.setVelocityY(GRAVITY);
+                    GIFT_TIMER = 0;
+                    GIFT_PAUSE = GameUtils.random.nextInt(GIFT_PAUSE_MAX) + 10;
+                } else {
+                    GIFT_TIMER++;
                 }
             }
         }
         // Make more snow
         if (snowFlakes.size() < MAX_FLAKES && FLAKES_TIMER > FLAKES_PAUSE) {
-            snowFlakes.add(new SnowFlake(GameUtils.getRandomX(),
+            snowFlakes.add(new SnowFlake(GameUtils.getPlayRandomX(),
                     GameUtils.getScreenHeight(),
                     GRAVITY));
             FLAKES_TIMER = 0;
@@ -204,6 +222,8 @@ public class PlayState extends GameState {
             snowFlake.draw(spriteBatch);
         if (gift != null)
             gift.draw(spriteBatch);
+        if (prize != null)
+            prize.draw(spriteBatch);
         playerGlove.draw(spriteBatch);
         scoreLabel.draw(spriteBatch);
         highScoreLabel.draw(spriteBatch);
@@ -221,9 +241,14 @@ public class PlayState extends GameState {
     }
 
     // Update game score
-    private void setScore(int score) {
-        SCORE = score;
-        scoreLabel.setText("SCORE: " + score);
+    private void addScore(int delta) {
+        if (prize != null) {
+            prize.setY(prize.getY() + delta * 10);
+            if (prize.getY() >= 0)
+                newPrize();
+        }
+        SCORE += delta;
+        scoreLabel.setText("SCORE: " + SCORE);
     }
 
     // Update game high score
@@ -247,6 +272,9 @@ public class PlayState extends GameState {
         scoreLabel.dispose();
         highScoreLabel.dispose();
         livesLabel.dispose();
+        prize.dispose();
+        if (gift != null)
+            gift.dispose();
     }
 
 }

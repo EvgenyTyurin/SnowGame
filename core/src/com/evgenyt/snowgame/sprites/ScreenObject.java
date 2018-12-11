@@ -56,8 +56,6 @@ public class ScreenObject {
     public void update(float dt) {
         y += velocityY * dt;
         x += velocityX * dt;
-        if (y < 0)
-            dispose();
     }
 
     // Object height
@@ -125,5 +123,9 @@ public class ScreenObject {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 }

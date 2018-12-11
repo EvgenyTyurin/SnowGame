@@ -24,7 +24,16 @@ public class GameUtils {
         return "normal/";
     }
 
-    // Initial gravity depends of screen height
+
+    // Returns width of snowfall area
+    public static float getPlayWidth() {return getScreenWidth() - 200;}
+
+    public static float getPlayRandomX() {return 50 + random.nextFloat() * (getPlayWidth() - 100);}
+
+    // Gravity gradient depends on screen size
+    public static float deltaGravity() {return getScreenHeight() / 500;}
+
+    // Initial gravity depends of screen size
     public static float getStartGravity() {
         return -70 * getScreenHeight() / 500;
     }
