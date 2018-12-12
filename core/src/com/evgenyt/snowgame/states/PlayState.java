@@ -46,11 +46,14 @@ public class PlayState extends GameState {
     private static ScreenLabel gameOverLabel;
     private static ScreenLabel livesLabel;
     private static Button backButton;
+    private ScreenObject background;
+
 
     // Game window create
     public PlayState(GameStateManager manager) {
         super(manager);
         // Sprites init
+        background = new ScreenObject("back_main.png",0, 0);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
         scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
                 GameUtils.getScreenHeight(),  "SCORE: " + SCORE);
@@ -95,7 +98,9 @@ public class PlayState extends GameState {
     private static void newPrize() {
         if (prize != null)
             prize.dispose();
-        prize = new Snowman(GameUtils.getScreenWidth() - 200, -380);
+        prize = new Snowman(0, 0);
+        prize.setX(GameUtils.getScreenWidth() - prize.getWidth() - 10);
+        prize.setY(-1 * prize.getHeight());
     }
 
     // Destroy all snow flakes
@@ -219,6 +224,7 @@ public class PlayState extends GameState {
     public void render(SpriteBatch spriteBatch) {
         // Sprite tool draw cycle begin
         spriteBatch.begin();
+        background.draw(spriteBatch, GameUtils.getScreenWidth(), GameUtils.getScreenHeight());
         for (SnowFlake snowFlake : snowFlakes)
             snowFlake.draw(spriteBatch);
         if (gift != null)

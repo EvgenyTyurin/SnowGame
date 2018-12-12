@@ -71,7 +71,7 @@ public class ScreenObject {
     // Object height
     public float getHeight() {
         if (texture != null)
-            return texture.getHeight();
+            return texture.getHeight() * GameUtils.textureRatio();
         else
             return 0;
     }
@@ -79,15 +79,14 @@ public class ScreenObject {
     // Object width
     public float getWidth() {
         if (texture != null)
-            return texture.getWidth();
+            return texture.getWidth() * GameUtils.textureRatio();
         else
             return 0;
     }
 
     // Object bounds
     public Rectangle getBounds() {
-        return new Rectangle(x, y, getWidth() * GameUtils.textureRatio(),
-                getHeight() * GameUtils.textureRatio());
+        return new Rectangle(x, y, getWidth(), getHeight());
     }
 
     // Is object collides with another

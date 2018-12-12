@@ -32,11 +32,11 @@ public class GameUtils {
     }
 
     // Get speed of prize rising
-    public static int getPrizeDeltaY() {
+    public static float getPrizeDeltaY() {
         if (DEVELOPMENT)
             return 50;
         else
-            return 2;
+            return 2 * textureRatio();
     }
 
     // Directory with textures and fonts depends on screen size
@@ -45,7 +45,7 @@ public class GameUtils {
         if (getScreenHeight() > 1000)
             return "big/";
         */
-        return "normal/";
+        return "textures/";
     }
 
 

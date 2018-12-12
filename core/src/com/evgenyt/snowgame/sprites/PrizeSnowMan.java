@@ -7,6 +7,7 @@ package com.evgenyt.snowgame.sprites;
 public class PrizeSnowMan extends ScreenObject {
 
     public PrizeSnowMan(float x, float y) {
-        super("prize_snowman.png", x, y);
+        super("snowman.png", x, y);
     }
+
 }

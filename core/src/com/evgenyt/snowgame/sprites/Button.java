@@ -1,6 +1,7 @@
 package com.evgenyt.snowgame.sprites;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.evgenyt.snowgame.GameUtils;
 
 /**
  * Button
@@ -14,9 +15,12 @@ public class Button extends ScreenObject {
     @Override
     public void draw(SpriteBatch spriteBatch) {
         if (getTexture() != null)
-            spriteBatch.draw(getTexture(), getX(), getY());
+            spriteBatch.draw(getTexture(), getX(), getY(),
+                    getTexture().getWidth() * GameUtils.textureRatio(),
+                    getTexture().getHeight() * GameUtils.textureRatio());
         if (getText() != null && !getText().equals(""))
-            getFont().draw(spriteBatch, getText(), getX(), getY() + 50);
+            getFont().draw(spriteBatch, getText(), getX(),
+                    getY() + getTexture().getHeight() * GameUtils.textureRatio());
 
     }
 }
