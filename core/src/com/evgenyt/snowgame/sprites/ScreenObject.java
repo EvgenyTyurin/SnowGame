@@ -46,8 +46,10 @@ public class ScreenObject {
 
     // Draw object texture on screen
     public void draw(SpriteBatch spriteBatch) {
-        if (texture != null)
-            spriteBatch.draw(texture, x, y);
+        if (texture != null) {
+            spriteBatch.draw(texture, x, y, texture.getWidth() * GameUtils.textureRatio(),
+                    texture.getHeight() * GameUtils.textureRatio());
+        }
         if (text != null && !text.equals(""))
             font.draw(spriteBatch, text, x, y);
     }
@@ -84,7 +86,8 @@ public class ScreenObject {
 
     // Object bounds
     public Rectangle getBounds() {
-        return new Rectangle(x, y, getWidth(), getHeight());
+        return new Rectangle(x, y, getWidth() * GameUtils.textureRatio(),
+                getHeight() * GameUtils.textureRatio());
     }
 
     // Is object collides with another

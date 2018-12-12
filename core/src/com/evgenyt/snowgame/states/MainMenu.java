@@ -34,7 +34,7 @@ public class MainMenu extends GameState {
                 "Play");
         prizeButton = new Button(GameUtils.getCenterX() - 150, GameUtils.getCenterY() - 30,
                 "Gifts");
-        background = new ScreenObject("back_main.jpg",0, 0);
+        background = new ScreenObject("back_main.png",0, 0);
         snowFlakes = new ArrayList<>();
         GRAVITY = GameUtils.getStartGravity();
         MAX_FLAKES = 20;

@@ -27,6 +27,10 @@ public class GameUtils {
     // Prefs keys
     public static final String KEY_PRIZE_SNOWMAN = "PRIZE_SNOWMAN";
 
+    public static float textureRatio() {
+        return getScreenWidth() / 2000;
+    }
+
     // Get speed of prize rising
     public static int getPrizeDeltaY() {
         if (DEVELOPMENT)
