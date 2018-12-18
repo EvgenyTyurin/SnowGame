@@ -22,9 +22,9 @@ public class MainMenu extends GameState {
     private static int FLAKES_PAUSE;
     private static int FLAKES_TIMER;
 
-    private Button gameButton;
-    private Button prizeButton;
-    private ScreenObject background;
+    private static Button gameButton;
+    private static Button prizeButton;
+    private static ScreenObject background;
     private static ArrayList<SnowFlake> snowFlakes;
 
     // Create main menu

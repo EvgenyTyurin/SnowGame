@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.states.GameStateManager;
 import com.evgenyt.snowgame.states.MainMenu;
-import com.evgenyt.snowgame.states.PlayState;
 
 /**
  * Let It Snow Game

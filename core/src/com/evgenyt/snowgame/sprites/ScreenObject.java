@@ -44,7 +44,7 @@ public class ScreenObject {
         this("", x, y, text);
     }
 
-    // Draw object texture on screen
+    // Draw object on screen with game scaling
     public void draw(SpriteBatch spriteBatch) {
         if (texture != null) {
             spriteBatch.draw(texture, x, y, texture.getWidth() * GameUtils.textureRatio(),
@@ -54,10 +54,21 @@ public class ScreenObject {
             font.draw(spriteBatch, text, x, y);
     }
 
-    // Draw object texture on screen
+    // Draw object on screen with specified width and height
     public void draw(SpriteBatch spriteBatch, float w, float h) {
         if (texture != null)
             spriteBatch.draw(texture, x, y, w, h);
+        if (text != null && !text.equals(""))
+            font.draw(spriteBatch, text, x, y);
+    }
+
+    // Draw object on screen with specified scale
+    public void draw(SpriteBatch spriteBatch, float scale) {
+        if (texture != null) {
+            float w = getWidth() * scale;
+            float h = getHeight() * scale;
+            spriteBatch.draw(texture, x, y, w, h);
+        }
         if (text != null && !text.equals(""))
             font.draw(spriteBatch, text, x, y);
     }

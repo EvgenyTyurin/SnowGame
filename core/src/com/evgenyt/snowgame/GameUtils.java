@@ -2,7 +2,9 @@ package com.evgenyt.snowgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.evgenyt.snowgame.sprites.ScreenObject;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Random;
 public class GameUtils {
 
     // Development mode flag
-    public static final boolean DEVELOPMENT = false;
+    private static final boolean DEVELOPMENT = false;
 
     // Game window properties used in Desktop test launcher
     public static final int DESKTOP_SCREEN_WIDTH = 1280;
@@ -26,9 +28,17 @@ public class GameUtils {
 
     // Prefs keys
     public static final String KEY_PRIZE_SNOWMAN = "PRIZE_SNOWMAN";
+    public static final String KEY_PRIZE_SANTA = "PRIZE_SANTA";
+    public static final String KEY_PRIZE_SNEGURKA = "PRIZE_SNEGURKA";
+    public static final String KEY_PRIZE_DEER = "PRIZE_DEER";
+    public static final String KEY_PRIZE_RABBIT = "PRIZE_RABBIT";
 
-    public static float textureRatio() {
-        return getScreenWidth() / 2000;
+    // Maximum pause between gifts
+    public static int getGiftPauseMax() {
+        if (DEVELOPMENT)
+            return 1;
+        else
+            return 150;
     }
 
     // Get speed of prize rising
@@ -39,23 +49,31 @@ public class GameUtils {
             return 2 * textureRatio();
     }
 
+
+    // Destroy sprites in collection and clear it
+    public static void clearSpriteArray (ArrayList<ScreenObject> arrayList) {
+        for (ScreenObject screenObject : arrayList)
+            screenObject.dispose();
+        arrayList.clear();
+    }
+
+    // Value to adapt textures to actual screen size from default target width=2000
+    public static float textureRatio() {
+        return getScreenWidth() / 2000;
+    }
+
     // Directory with textures and fonts depends on screen size
     public static String getTextureDir() {
-        /*
-        if (getScreenHeight() > 1000)
-            return "big/";
-        */
         return "textures/";
     }
 
-
     // Returns width of snowfall area
-    public static float getPlayWidth() {return getScreenWidth() - 200;}
+    private static float getPlayWidth() {return getScreenWidth() - 200;}
 
     public static float getPlayRandomX() {return 50 + random.nextFloat() * (getPlayWidth() - 100);}
 
     // Gravity gradient depends on screen size
-    public static float deltaGravity() {return getScreenHeight() / 500;}
+    public static float deltaGravity() {return getScreenHeight() / 500 * 2;}
 
     // Initial gravity depends of screen size
     public static float getStartGravity() {

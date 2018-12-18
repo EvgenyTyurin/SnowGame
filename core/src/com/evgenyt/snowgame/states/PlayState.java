@@ -3,11 +3,14 @@ package com.evgenyt.snowgame.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.GameUtils;
-import com.evgenyt.snowgame.sprites.Button;
+import com.evgenyt.snowgame.sprites.Deer;
 import com.evgenyt.snowgame.sprites.GiftBox;
 import com.evgenyt.snowgame.sprites.Glove;
+import com.evgenyt.snowgame.sprites.Rabbit;
+import com.evgenyt.snowgame.sprites.Santa;
 import com.evgenyt.snowgame.sprites.ScreenObject;
 import com.evgenyt.snowgame.sprites.ScreenLabel;
+import com.evgenyt.snowgame.sprites.Snegurka;
 import com.evgenyt.snowgame.sprites.SnowFlake;
 import com.evgenyt.snowgame.sprites.Snowman;
 import com.evgenyt.snowgame.sprites.Wand;
@@ -22,35 +25,34 @@ import java.util.Iterator;
 public class PlayState extends GameState {
 
     // Game "physics" parameters
-    private static float GRAVITY;
-    private static int MAX_FLAKES;
-    private static int FLAKES_PAUSE;
-    private static int FLAKES_TIMER;
-    private static int GIFT_PAUSE_MAX = 150;
-    private static int GIFT_PAUSE;
-    private static int GIFT_TIMER;
+    private float GRAVITY;
+    private int MAX_FLAKES;
+    private int FLAKES_PAUSE;
+    private int FLAKES_TIMER;
+    private int GIFT_PAUSE;
+    private int GIFT_TIMER;
 
     // Game score
-    private static int SCORE;
-    private static int HIGH_SCORE;
-    private static int LIVES;
-    private static boolean GAME_OVER;
+    private int SCORE;
+    private int HIGH_SCORE;
+    private int LIVES;
+    private boolean GAME_OVER;
 
     // Sprites on a screen
-    private static ArrayList<SnowFlake> snowFlakes;
-    private static Glove playerGlove;
-    private static ScreenObject gift;
-    private static ScreenObject prize;
-    private static ScreenLabel scoreLabel;
-    private static ScreenLabel highScoreLabel;
-    private static ScreenLabel gameOverLabel;
-    private static ScreenLabel livesLabel;
-    private static Button backButton;
+    private ArrayList<SnowFlake> snowFlakes;
+    private ArrayList<ScreenObject> liveGloves;
+    private Glove playerGlove;
+    private ScreenObject gift;
+    private ScreenObject prize;
+    private ScreenLabel scoreLabel;
+    private ScreenLabel highScoreLabel;
+    private ScreenLabel gameOverLabel;
+    private ScreenObject backButton;
     private ScreenObject background;
 
 
     // Game window create
-    public PlayState(GameStateManager manager) {
+    PlayState(GameStateManager manager) {
         super(manager);
         // Sprites init
         background = new ScreenObject("back_main.png",0, 0);
@@ -61,10 +63,10 @@ public class PlayState extends GameState {
                 GameUtils.getScreenHeight() - 50,  "TOP: " + readHighScore());
         gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
                 GameUtils.getCenterY() + 30, "GAME OVER");
-        livesLabel = new ScreenLabel(310,
-                GameUtils.getScreenHeight(), "LIVES: " + LIVES);
-        backButton = new Button(10, GameUtils.getScreenHeight() - 60, "<- Back");
+        backButton = new ScreenObject("button_close.png", 10, GameUtils.getScreenHeight());
+        backButton.setY(GameUtils.getScreenHeight() - backButton.getHeight() - 10);
         snowFlakes = new ArrayList<>();
+        liveGloves = new ArrayList<>();
         // Start new game
         newGame();
     }
@@ -80,7 +82,8 @@ public class PlayState extends GameState {
         setHighScore(readHighScore());
         SCORE = 0;
         addScore(0);
-        setLives(3);
+        LIVES = 0;
+        addLives(2);
         GAME_OVER = false;
         newPrize();
     }
@@ -90,15 +93,40 @@ public class PlayState extends GameState {
         GRAVITY = GameUtils.getStartGravity();
         MAX_FLAKES = 4;
         FLAKES_PAUSE = 100;
-        GIFT_PAUSE = GameUtils.random.nextInt(GIFT_PAUSE_MAX) + 10;
+        GIFT_PAUSE = GameUtils.random.nextInt(GameUtils.getGiftPauseMax()) + 10;
         GIFT_TIMER = 0;
         FLAKES_TIMER = FLAKES_PAUSE;
     }
 
-    private static void newPrize() {
+    // New prize appears under right corner of screen
+    private void newPrize() {
         if (prize != null)
             prize.dispose();
-        prize = new Snowman(0, 0);
+        int prizeType = GameUtils.random.nextInt(54);
+        if (prizeType < 15)
+            prize = new Snowman(0, 0);
+        else if (prizeType < 30)
+            prize = new Rabbit(0, 0);
+        else if (prizeType < 45)
+            prize = new Deer(0, 0);
+        else if (prizeType < 50)
+            prize = new Snegurka(0, 0);
+        else
+            prize = new Santa(0, 0);
+        /*
+        switch (GameUtils.random.nextInt(10)) {
+            case 0: prize = new Snowman(0, 0);
+                    break;
+            case 3: prize = new Rabbit(0, 0);
+                break;
+            case 4: prize = new Deer(0, 0);
+                break;
+            case 2: prize = new Snegurka(0, 0);
+                break;
+            case 1: prize = new Santa(0, 0);
+                    break;
+        }
+        */
         prize.setX(GameUtils.getScreenWidth() - prize.getWidth() - 10);
         prize.setY(-1 * prize.getHeight());
     }
@@ -149,7 +177,7 @@ public class PlayState extends GameState {
             if (gift.collides(playerGlove)) {
                 // + 1 life
                 if(gift instanceof Glove) {
-                    setLives(++LIVES);
+                    addLives(1);
                 } else
                 if (gift instanceof GiftBox) {
                     addScore(10);
@@ -168,7 +196,7 @@ public class PlayState extends GameState {
             snowFlake.update(deltaTime);
             // Snowflake on the ground
             if (snowFlake.getY() < -1 * snowFlake.getHeight()) {
-                setLives(--LIVES);
+                addLives(-1);
                 // Game over, men. Game over.
                 if (LIVES <= 0)
                     GAME_OVER = true;
@@ -202,7 +230,7 @@ public class PlayState extends GameState {
                     }
                     gift.setVelocityY(GRAVITY);
                     GIFT_TIMER = 0;
-                    GIFT_PAUSE = GameUtils.random.nextInt(GIFT_PAUSE_MAX) + 10;
+                    GIFT_PAUSE = GameUtils.random.nextInt(GameUtils.getGiftPauseMax()) + 10;
                 } else {
                     GIFT_TIMER++;
                 }
@@ -225,16 +253,17 @@ public class PlayState extends GameState {
         // Sprite tool draw cycle begin
         spriteBatch.begin();
         background.draw(spriteBatch, GameUtils.getScreenWidth(), GameUtils.getScreenHeight());
+        if (prize != null)
+            prize.draw(spriteBatch);
+        for (ScreenObject liveGlove : liveGloves)
+            liveGlove.draw(spriteBatch, liveGlove.getWidth() / 2, liveGlove.getHeight() / 2);
         for (SnowFlake snowFlake : snowFlakes)
             snowFlake.draw(spriteBatch);
         if (gift != null)
             gift.draw(spriteBatch);
-        if (prize != null)
-            prize.draw(spriteBatch);
         playerGlove.draw(spriteBatch);
         scoreLabel.draw(spriteBatch);
         highScoreLabel.draw(spriteBatch);
-        livesLabel.draw(spriteBatch);
         backButton.draw(spriteBatch);
         if (GAME_OVER)
             gameOverLabel.draw(spriteBatch);
@@ -243,9 +272,16 @@ public class PlayState extends GameState {
     }
 
     // Update lives count
-    private void setLives(int lives) {
-        LIVES = lives;
-        livesLabel.setText("LIVES: " + LIVES);
+    private void addLives(int delta_lives) {
+        LIVES +=delta_lives;
+        GameUtils.clearSpriteArray(liveGloves);
+        for (int i = 1; i <= LIVES; i++) {
+            Glove liveGlove = new Glove(0,0);
+            liveGlove.setX(liveGlove.getWidth() * (i - 1) / 2 +
+                    backButton.getX() + backButton.getWidth() + 10);
+            liveGlove.setY(GameUtils.getScreenHeight() - (liveGlove.getHeight() / 2) - 10);
+            liveGloves.add(liveGlove);
+        }
     }
 
     // Update game score
@@ -255,9 +291,20 @@ public class PlayState extends GameState {
         if (prize != null) {
             prize.setY(prize.getY() + delta * GameUtils.getPrizeDeltaY());
             if (prize.getY() >= 0) {
-                if (prize instanceof Snowman) {
-                    GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNOWMAN,
-                            GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0) + 1);
+                String prefKey = "";
+                if (prize instanceof Snowman)
+                    prefKey = GameUtils.KEY_PRIZE_SNOWMAN;
+                if (prize instanceof Santa)
+                    prefKey = GameUtils.KEY_PRIZE_SANTA;
+                if (prize instanceof Snegurka)
+                    prefKey = GameUtils.KEY_PRIZE_SNEGURKA;
+                if (prize instanceof Deer)
+                    prefKey = GameUtils.KEY_PRIZE_DEER;
+                if (prize instanceof Rabbit)
+                    prefKey = GameUtils.KEY_PRIZE_RABBIT;
+                if (!prefKey.equals("")) {
+                    GameUtils.prefs.putInteger(prefKey,
+                            GameUtils.prefs.getInteger(prefKey, 0) + 1);
                     GameUtils.prefs.flush();
                 }
                 getStateManager().push(new PrizeState(getStateManager()));
@@ -280,14 +327,14 @@ public class PlayState extends GameState {
         return GameUtils.prefs.getInteger("HIGH_SCORE", 0);
     }
 
-    // Exit game
+    // Exit play state
     @Override
     public void dispose() {
         killSnow();
+        GameUtils.clearSpriteArray(liveGloves);
         playerGlove.dispose();
         scoreLabel.dispose();
         highScoreLabel.dispose();
-        livesLabel.dispose();
         prize.dispose();
         backButton.dispose();
         if (gift != null)
