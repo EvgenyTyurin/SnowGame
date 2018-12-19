@@ -58,8 +58,8 @@ public class PlayState extends GameState {
         background = new ScreenObject("back_main.png",0, 0);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
         scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
-                GameUtils.getScreenHeight(),  "SCORE: " + SCORE);
-        highScoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
+                GameUtils.getScreenHeight() - 10,  "SCORE: " + SCORE);
+        highScoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 210,
                 GameUtils.getScreenHeight() - 50,  "TOP: " + readHighScore());
         gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
                 GameUtils.getCenterY() + 30, "GAME OVER");
@@ -113,20 +113,6 @@ public class PlayState extends GameState {
             prize = new Snegurka(0, 0);
         else
             prize = new Santa(0, 0);
-        /*
-        switch (GameUtils.random.nextInt(10)) {
-            case 0: prize = new Snowman(0, 0);
-                    break;
-            case 3: prize = new Rabbit(0, 0);
-                break;
-            case 4: prize = new Deer(0, 0);
-                break;
-            case 2: prize = new Snegurka(0, 0);
-                break;
-            case 1: prize = new Santa(0, 0);
-                    break;
-        }
-        */
         prize.setX(GameUtils.getScreenWidth() - prize.getWidth() - 10);
         prize.setY(-1 * prize.getHeight());
     }
@@ -196,24 +182,32 @@ public class PlayState extends GameState {
             snowFlake.update(deltaTime);
             // Snowflake on the ground
             if (snowFlake.getY() < -1 * snowFlake.getHeight()) {
-                addLives(-1);
-                // Game over, men. Game over.
-                if (LIVES <= 0)
-                    GAME_OVER = true;
-                else
-                    physicsReset();
+                if (snowFlake.isCached()) {
+                    snowFlake.dispose();
+                    objectIterator.remove();
+                    addScore(1);
+                } else {
+                    addLives(-1);
+                    // Game over, men. Game over.
+                    if (LIVES <= 0)
+                        GAME_OVER = true;
+                    else
+                        physicsReset();
                     killSnow();
-                break;
+                    break;
+                }
             } else
             // Snowflake cached
-            if (snowFlake.collides(playerGlove)) {
-                snowFlake.dispose();
-                objectIterator.remove();
-                addScore(1);
+            if (!snowFlake.isCached() && snowFlake.collides(playerGlove)) {
+                snowFlake.setCached(true);
+                snowFlake.setVelocityX((GameUtils.getPlayWidth() - snowFlake.getX()) * 0.8f);
+                snowFlake.setVelocityY(-1 * snowFlake.getY());
                 // Make game harder
                 GRAVITY -= GameUtils.deltaGravity();
-                if (SCORE % 4 == 0) {
+                if (SCORE % 2 == 0) {
                     FLAKES_PAUSE--;
+                }
+                if (SCORE % 4 == 0) {
                     MAX_FLAKES++;
                 }
                 // It's time to make a gift
@@ -287,7 +281,7 @@ public class PlayState extends GameState {
     // Update game score
     private void addScore(int delta) {
         SCORE += delta;
-        scoreLabel.setText("SCORE: " + SCORE);
+        scoreLabel.setText("СЧЁТ: " + SCORE);
         if (prize != null) {
             prize.setY(prize.getY() + delta * GameUtils.getPrizeDeltaY());
             if (prize.getY() >= 0) {
@@ -317,7 +311,7 @@ public class PlayState extends GameState {
     // Update game high score
     private void setHighScore(int score) {
         HIGH_SCORE = score;
-        highScoreLabel.setText("TOP: " + score);
+        highScoreLabel.setText("МАКС: " + score);
         GameUtils.prefs.putInteger("HIGH_SCORE", score);
         GameUtils.prefs.flush();
     }

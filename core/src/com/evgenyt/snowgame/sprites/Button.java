@@ -19,8 +19,8 @@ public class Button extends ScreenObject {
                     getTexture().getWidth() * GameUtils.textureRatio(),
                     getTexture().getHeight() * GameUtils.textureRatio());
         if (getText() != null && !getText().equals(""))
-            getFont().draw(spriteBatch, getText(), getX(),
-                    getY() + getTexture().getHeight() * GameUtils.textureRatio());
+            getFont().draw(spriteBatch, getText(), getX() + 10,
+                    getY() + getTexture().getHeight() * GameUtils.textureRatio() - 15);
 
     }
 }

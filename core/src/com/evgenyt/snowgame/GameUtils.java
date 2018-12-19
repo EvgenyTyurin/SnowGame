@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Screen data and procedures
+ * Game, screen data and procedures
  */
 
 public class GameUtils {
 
     // Development mode flag
-    private static final boolean DEVELOPMENT = false;
+    static final boolean DEVELOPMENT = false;
 
     // Game window properties used in Desktop test launcher
     public static final int DESKTOP_SCREEN_WIDTH = 1280;
@@ -68,7 +68,7 @@ public class GameUtils {
     }
 
     // Returns width of snowfall area
-    private static float getPlayWidth() {return getScreenWidth() - 200;}
+    public static float getPlayWidth() {return getScreenWidth() - 200;}
 
     public static float getPlayRandomX() {return 50 + random.nextFloat() * (getPlayWidth() - 100);}
 

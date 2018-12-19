@@ -108,6 +108,12 @@ public class ScreenObject {
             return false;
     }
 
+    // Set position on a screen
+    public void setPos(float x, float y) {
+        setX(x);
+        setY(y);
+    }
+
     // Destroy object
     public void dispose() {
         if (texture != null)
@@ -136,6 +142,10 @@ public class ScreenObject {
 
     public void setVelocityY(float velocityY) {
         this.velocityY = velocityY;
+    }
+
+    public void setVelocityX(float velocityX) {
+        this.velocityX = velocityX;
     }
 
     public void setX(float x) {

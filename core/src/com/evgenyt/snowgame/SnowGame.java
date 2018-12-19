@@ -25,6 +25,16 @@ public class SnowGame extends ApplicationAdapter {
 	// Game launch
 	@Override
 	public void create () {
+
+		if (GameUtils.DEVELOPMENT) {
+			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0);
+			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_DEER, 0);
+			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_RABBIT, 0);
+			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SANTA, 0);
+			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNEGURKA, 0);
+			GameUtils.prefs.flush();
+		}
+
 		// Prepare screen
 		spriteBatch = new SpriteBatch();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
