@@ -2,19 +2,23 @@ package com.evgenyt.snowgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.evgenyt.snowgame.sprites.ScreenObject;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Game, screen data and procedures
+ * Game, screen, audio data and procedures
  */
 
 public class GameUtils {
 
     // Development mode flag
     static final boolean DEVELOPMENT = false;
+
+    public static final Sound snowSound = Gdx.audio.newSound(Gdx.files.internal("snow.wav"));
 
     // Game window properties used in Desktop test launcher
     public static final int DESKTOP_SCREEN_WIDTH = 1280;
@@ -32,6 +36,12 @@ public class GameUtils {
     public static final String KEY_PRIZE_SNEGURKA = "PRIZE_SNEGURKA";
     public static final String KEY_PRIZE_DEER = "PRIZE_DEER";
     public static final String KEY_PRIZE_RABBIT = "PRIZE_RABBIT";
+
+    // Textures
+    public static final Texture flake_texture =
+            new Texture(GameUtils.getTextureDir() + "flake.png");
+    public static final Texture back_play =
+            new Texture(GameUtils.getTextureDir() + "back_play.png");
 
     // Maximum pause between gifts
     public static int getGiftPauseMax() {

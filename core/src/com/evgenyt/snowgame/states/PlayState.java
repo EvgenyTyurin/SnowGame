@@ -55,16 +55,16 @@ public class PlayState extends GameState {
     PlayState(GameStateManager manager) {
         super(manager);
         // Sprites init
-        background = new ScreenObject("back_main.png",0, 0);
+        background = new ScreenObject(GameUtils.back_play,0, 0);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
-        scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 200,
+        scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 230,
                 GameUtils.getScreenHeight() - 10,  "SCORE: " + SCORE);
-        highScoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 210,
+        highScoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 187,
                 GameUtils.getScreenHeight() - 50,  "TOP: " + readHighScore());
         gameOverLabel = new ScreenLabel(GameUtils.getCenterX() - 100,
                 GameUtils.getCenterY() + 30, "GAME OVER");
-        backButton = new ScreenObject("button_close.png", 10, GameUtils.getScreenHeight());
-        backButton.setY(GameUtils.getScreenHeight() - backButton.getHeight() - 10);
+        backButton = new ScreenObject("button_close.png", 0, GameUtils.getScreenHeight());
+        backButton.setY(GameUtils.getScreenHeight() - backButton.getHeight());
         snowFlakes = new ArrayList<>();
         liveGloves = new ArrayList<>();
         // Start new game
@@ -166,7 +166,7 @@ public class PlayState extends GameState {
                     addLives(1);
                 } else
                 if (gift instanceof GiftBox) {
-                    addScore(10);
+                    addScore(50);
                 } else
                 if (gift instanceof Wand) {
                     physicsReset();
@@ -199,7 +199,8 @@ public class PlayState extends GameState {
             } else
             // Snowflake cached
             if (!snowFlake.isCached() && snowFlake.collides(playerGlove)) {
-                snowFlake.setCached(true);
+                GameUtils.snowSound.play();
+                snowFlake.setCached();
                 snowFlake.setVelocityX((GameUtils.getPlayWidth() - snowFlake.getX()) * 0.8f);
                 snowFlake.setVelocityY(-1 * snowFlake.getY());
                 // Make game harder
@@ -281,7 +282,7 @@ public class PlayState extends GameState {
     // Update game score
     private void addScore(int delta) {
         SCORE += delta;
-        scoreLabel.setText("СЧЁТ: " + SCORE);
+        scoreLabel.setText("SCORE: " + SCORE);
         if (prize != null) {
             prize.setY(prize.getY() + delta * GameUtils.getPrizeDeltaY());
             if (prize.getY() >= 0) {
@@ -311,7 +312,7 @@ public class PlayState extends GameState {
     // Update game high score
     private void setHighScore(int score) {
         HIGH_SCORE = score;
-        highScoreLabel.setText("МАКС: " + score);
+        highScoreLabel.setText("MAX: " + score);
         GameUtils.prefs.putInteger("HIGH_SCORE", score);
         GameUtils.prefs.flush();
     }

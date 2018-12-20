@@ -25,10 +25,13 @@ public class PrizeState extends GameState {
     private ArrayList<ScreenObject> prizes;
     private ScreenObject background;
     private Pixmap pixMapBack;
+    private ScreenObject backButton;
 
     PrizeState(GameStateManager manager) {
         super(manager);
         background = new ScreenObject("prize_back.png", 0, 0);
+        backButton = new ScreenObject("button_close.png", 0, GameUtils.getScreenHeight());
+        backButton.setY(GameUtils.getScreenHeight() - backButton.getHeight());
         if (!background.getTexture().getTextureData().isPrepared())
             background.getTexture().getTextureData().prepare();
         pixMapBack = background.getTexture().getTextureData().consumePixmap();
@@ -76,7 +79,14 @@ public class PrizeState extends GameState {
         // If nothing pressed - exit
         if (!Gdx.input.justTouched())
             return;
-        getStateManager().pop();
+        // Get X and Y of user click
+        float touchX = Gdx.input.getX();
+        float touchY = GameUtils.flipY(Gdx.input.getY());
+        // Close prize window
+        if (backButton.getBounds().contains(touchX, touchY)) {
+            dispose();
+            getStateManager().pop();
+        }
     }
 
     @Override
@@ -90,12 +100,14 @@ public class PrizeState extends GameState {
         background.draw(spriteBatch, GameUtils.getScreenWidth(), GameUtils.getScreenHeight());
         for (ScreenObject prize : prizes)
             prize.draw(spriteBatch);
+        backButton.draw(spriteBatch);
         spriteBatch.end();
     }
 
     @Override
     public void dispose() {
         background.dispose();
+        backButton.dispose();
         Iterator<ScreenObject> objectIterator = prizes.iterator();
         while (objectIterator.hasNext()) {
             ScreenObject screenObject = objectIterator.next();

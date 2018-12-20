@@ -1,5 +1,7 @@
 package com.evgenyt.snowgame.sprites;
 
+import com.evgenyt.snowgame.GameUtils;
+
 /**
  * Snowflake class
  */
@@ -10,7 +12,7 @@ public class SnowFlake extends ScreenObject {
 
     // New snowflake
     public SnowFlake(float x, float y, float gravity) {
-        super("flake.png", x, y);
+        super(GameUtils.flake_texture, x, y);
         setVelocityY(gravity);
         cached = false;
     }
@@ -19,7 +21,7 @@ public class SnowFlake extends ScreenObject {
         return cached;
     }
 
-    public void setCached(boolean cached) {
-        this.cached = cached;
+    public void setCached() {
+        this.cached = true;
     }
 }

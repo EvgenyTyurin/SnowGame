@@ -18,6 +18,22 @@ public class ScreenObject {
     private String text;
     private float x, y, velocityY, velocityX;
     private BitmapFont font;
+    private boolean keepTexture = false;
+
+
+
+    // New empty object on x,y coordinates
+    public ScreenObject(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // New object with loaded texture
+    public ScreenObject(Texture texture, float x, float y) {
+        this(x,y);
+        this.texture = texture;
+        keepTexture = true;
+    }
 
     // New object with img and text
     public ScreenObject(String textureFile, float x, float y, String text) {
@@ -58,7 +74,7 @@ public class ScreenObject {
     public void draw(SpriteBatch spriteBatch, float w, float h) {
         if (texture != null)
             spriteBatch.draw(texture, x, y, w, h);
-        if (text != null && !text.equals(""))
+        if (text != null && !text.equals("") && font != null)
             font.draw(spriteBatch, text, x, y);
     }
 
@@ -69,7 +85,7 @@ public class ScreenObject {
             float h = getHeight() * scale;
             spriteBatch.draw(texture, x, y, w, h);
         }
-        if (text != null && !text.equals(""))
+        if (text != null && !text.equals("") && font != null)
             font.draw(spriteBatch, text, x, y);
     }
 
@@ -116,7 +132,7 @@ public class ScreenObject {
 
     // Destroy object
     public void dispose() {
-        if (texture != null)
+        if (texture != null && !keepTexture)
             texture.dispose();
     }
 

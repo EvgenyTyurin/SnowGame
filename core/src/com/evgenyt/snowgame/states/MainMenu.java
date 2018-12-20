@@ -31,9 +31,9 @@ public class MainMenu extends GameState {
     public MainMenu(GameStateManager manager) {
         super(manager);
         gameButton = new Button(GameUtils.getCenterX() - 150, GameUtils.getCenterY() + 50,
-                "Играть");
+                "Play");
         prizeButton = new Button(GameUtils.getCenterX() - 150, GameUtils.getCenterY() - 50,
-                "Подарки");
+                "Prizes");
         background = new ScreenObject("back_main.png",0, 0);
         snowFlakes = new ArrayList<>();
         GRAVITY = GameUtils.getStartGravity();

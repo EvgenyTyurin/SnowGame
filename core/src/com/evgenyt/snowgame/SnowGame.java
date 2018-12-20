@@ -2,6 +2,7 @@ package com.evgenyt.snowgame;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evgenyt.snowgame.states.GameStateManager;
@@ -22,6 +23,8 @@ public class SnowGame extends ApplicationAdapter {
 	// Game screens manager
 	private GameStateManager stateManager;
 
+	private Music music;
+
 	// Game launch
 	@Override
 	public void create () {
@@ -34,6 +37,12 @@ public class SnowGame extends ApplicationAdapter {
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNEGURKA, 0);
 			GameUtils.prefs.flush();
 		}
+
+		// Music
+		music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+		music.setLooping(true);
+		music.setVolume(0.1f);
+		music.play();
 
 		// Prepare screen
 		spriteBatch = new SpriteBatch();
