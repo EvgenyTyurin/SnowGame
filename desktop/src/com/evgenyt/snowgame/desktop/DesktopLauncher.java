@@ -13,6 +13,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		// Setting config of the game window
+		// System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
 		config.width = GameUtils.DESKTOP_SCREEN_WIDTH;
 		config.height = GameUtils.DESKTOP_SCREEN_HEIGHT;
 		config.title = SnowGame.APP_TITLE;

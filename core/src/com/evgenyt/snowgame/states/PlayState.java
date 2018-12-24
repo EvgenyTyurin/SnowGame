@@ -55,7 +55,7 @@ public class PlayState extends GameState {
     PlayState(GameStateManager manager) {
         super(manager);
         // Sprites init
-        background = new ScreenObject(GameUtils.back_play,0, 0);
+        background = new ScreenObject(GameUtils.PLAY_BACK_TEXTURE,0, 0);
         playerGlove = new Glove(GameUtils.getCenterX(), 0);
         scoreLabel = new ScreenLabel(GameUtils.getScreenWidth() - 230,
                 GameUtils.getScreenHeight() - 10,  "SCORE: " + SCORE);
@@ -114,7 +114,7 @@ public class PlayState extends GameState {
         else
             prize = new Santa(0, 0);
         prize.setX(GameUtils.getScreenWidth() - prize.getWidth() - 10);
-        prize.setY(-1 * prize.getHeight());
+        prize.setY(-1 * prize.getHeight() * GameUtils.prizeAdvance);
     }
 
     // Destroy all snow flakes

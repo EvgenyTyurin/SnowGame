@@ -37,9 +37,11 @@ public class PrizeState extends GameState {
         pixMapBack = background.getTexture().getTextureData().consumePixmap();
         prizes = new ArrayList<>();
         int snowman_count = GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0);
+        float prizeY = 10f;
         for (int i = 1; i <= snowman_count; i++) {
-            Vector2 posAtTree = getPosAtTree();
-            prizes.add(new PrizeSnowMan(posAtTree.x, posAtTree.y));
+            prizes.add( new PrizeSnowMan(
+                    i * GameUtils.PRIZE_SNOWMAN_TEXTURE.getWidth() * GameUtils.textureRatio(),
+                    prizeY));
         }
         for (int i = 1; i <= GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_RABBIT, 0); i++) {
             Vector2 posAtTree = getPosAtTree();
@@ -110,8 +112,6 @@ public class PrizeState extends GameState {
         backButton.dispose();
         Iterator<ScreenObject> objectIterator = prizes.iterator();
         while (objectIterator.hasNext()) {
-            ScreenObject screenObject = objectIterator.next();
-            screenObject.dispose();
             objectIterator.remove();
         }
     }

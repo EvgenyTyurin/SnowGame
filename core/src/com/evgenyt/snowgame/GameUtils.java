@@ -16,8 +16,12 @@ import java.util.Random;
 public class GameUtils {
 
     // Development mode flag
-    static final boolean DEVELOPMENT = false;
+    static final boolean DEVELOPMENT = true;
 
+    // How much prize initial position elevates
+    public static final float prizeAdvance = 0.75f;
+
+    // Cache sound
     public static final Sound snowSound = Gdx.audio.newSound(Gdx.files.internal("snow.wav"));
 
     // Game window properties used in Desktop test launcher
@@ -38,10 +42,20 @@ public class GameUtils {
     public static final String KEY_PRIZE_RABBIT = "PRIZE_RABBIT";
 
     // Textures
-    public static final Texture flake_texture =
+    public static final Texture FLAKE_TEXTURE =
             new Texture(GameUtils.getTextureDir() + "flake.png");
-    public static final Texture back_play =
+    public static final Texture PLAY_BACK_TEXTURE =
             new Texture(GameUtils.getTextureDir() + "back_play.png");
+    public static final Texture PRIZE_SNOWMAN_TEXTURE =
+            new Texture(GameUtils.getTextureDir() + "prize_snowman.png");
+    public static final Texture PRIZE_DEER_TEXTURE =
+            new Texture(GameUtils.getTextureDir() + "prize_deer.png");
+    public static final Texture PRIZE_RABBIT_TEXTURE =
+            new Texture(GameUtils.getTextureDir() + "prize_rabbit.png");
+    public static final Texture PRIZE_SANTA_TEXTURE =
+            new Texture(GameUtils.getTextureDir() + "prize_santa.png");
+    public static final Texture PRIZE_SNEGURKA_TEXTURE =
+            new Texture(GameUtils.getTextureDir() + "prize_snegurka.png");
 
     // Maximum pause between gifts
     public static int getGiftPauseMax() {

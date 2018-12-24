@@ -1,11 +1,13 @@
 package com.evgenyt.snowgame.sprites;
 
+import com.evgenyt.snowgame.GameUtils;
+
 /**
- * Created by tey on 19.12.2018.
+ * Santa prize
  */
 
 public class PrizeSanta extends ScreenObject {
     public PrizeSanta(float x, float y) {
-        super("prize_santa.png", x, y);
+        super(GameUtils.PRIZE_SANTA_TEXTURE, x, y);
     }
 }

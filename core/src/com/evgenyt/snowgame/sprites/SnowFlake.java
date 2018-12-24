@@ -12,7 +12,7 @@ public class SnowFlake extends ScreenObject {
 
     // New snowflake
     public SnowFlake(float x, float y, float gravity) {
-        super(GameUtils.flake_texture, x, y);
+        super(GameUtils.FLAKE_TEXTURE, x, y);
         setVelocityY(gravity);
         cached = false;
     }
