@@ -1,10 +1,7 @@
 package com.evgenyt.snowgame.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.evgenyt.snowgame.GameUtils;
 import com.evgenyt.snowgame.sprites.PrizeDeer;
 import com.evgenyt.snowgame.sprites.PrizeRabbit;
@@ -24,7 +21,6 @@ public class PrizeState extends GameState {
 
     private ArrayList<ScreenObject> prizes;
     private ScreenObject background;
-    private Pixmap pixMapBack;
     private ScreenObject backButton;
 
     PrizeState(GameStateManager manager) {
@@ -32,48 +28,30 @@ public class PrizeState extends GameState {
         background = new ScreenObject("prize_back.png", 0, 0);
         backButton = new ScreenObject("button_close.png", 0, GameUtils.getScreenHeight());
         backButton.setY(GameUtils.getScreenHeight() - backButton.getHeight());
-        if (!background.getTexture().getTextureData().isPrepared())
-            background.getTexture().getTextureData().prepare();
-        pixMapBack = background.getTexture().getTextureData().consumePixmap();
         prizes = new ArrayList<>();
         int snowman_count = GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0);
         float prizeY = 10f;
+        float prizeX = 10f;
         for (int i = 1; i <= snowman_count; i++) {
-            prizes.add( new PrizeSnowMan(
-                    i * GameUtils.PRIZE_SNOWMAN_TEXTURE.getWidth() * GameUtils.textureRatio(),
-                    prizeY));
+            prizes.add( new PrizeSnowMan(prizeX, prizeY));
+            prizeX += GameUtils.PRIZE_SNOWMAN_TEXTURE.getWidth() * GameUtils.textureRatio() * 1.2f;
         }
         for (int i = 1; i <= GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_RABBIT, 0); i++) {
-            Vector2 posAtTree = getPosAtTree();
-            prizes.add(new PrizeRabbit(posAtTree.x, posAtTree.y));
+            prizes.add( new PrizeRabbit(prizeX, prizeY));
+            prizeX += GameUtils.PRIZE_RABBIT_TEXTURE.getWidth() * GameUtils.textureRatio()  * 1.2f;
         }
         for (int i = 1; i <= GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SNEGURKA, 0); i++) {
-            Vector2 posAtTree = getPosAtTree();
-            prizes.add(new PrizeSnegurka(posAtTree.x, posAtTree.y));
+            prizes.add( new PrizeSnegurka(prizeX, prizeY));
+            prizeX += GameUtils.PRIZE_SNEGURKA_TEXTURE.getWidth() * GameUtils.textureRatio() * 1.2f;
         }
         for (int i = 1; i <= GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_SANTA, 0); i++) {
-            Vector2 posAtTree = getPosAtTree();
-            prizes.add(new PrizeSanta(posAtTree.x, posAtTree.y));
+            prizes.add( new PrizeSanta(prizeX, prizeY));
+            prizeX += GameUtils.PRIZE_SANTA_TEXTURE.getWidth() * GameUtils.textureRatio() * 1.2f;
         }
         for (int i = 1; i <= GameUtils.prefs.getInteger(GameUtils.KEY_PRIZE_DEER, 0); i++) {
-            Vector2 posAtTree = getPosAtTree();
-            prizes.add(new PrizeDeer(posAtTree.x, posAtTree.y));
+            prizes.add( new PrizeDeer(prizeX, prizeY));
+            prizeX += GameUtils.PRIZE_DEER_TEXTURE.getWidth() * GameUtils.textureRatio() * 1.2f;
         }
-    }
-
-    // Search random point at christmas tree
-    private Vector2 getPosAtTree() {
-        float prizeX;
-        float prizeY;
-        Color color;
-        do {
-            prizeX = GameUtils.random.nextFloat() * GameUtils.getScreenWidth();
-            prizeY = GameUtils.random.nextFloat() * GameUtils.getScreenHeight();
-            color = new Color(pixMapBack.getPixel((int) (prizeX / GameUtils.textureRatio()),
-                    (int) (prizeY / GameUtils.textureRatio())));
-        }
-        while (color.r > 0.11f || color.r <= 0);
-        return new Vector2(prizeX, prizeY);
     }
 
     @Override
@@ -110,9 +88,5 @@ public class PrizeState extends GameState {
     public void dispose() {
         background.dispose();
         backButton.dispose();
-        Iterator<ScreenObject> objectIterator = prizes.iterator();
-        while (objectIterator.hasNext()) {
-            objectIterator.remove();
-        }
     }
 }
