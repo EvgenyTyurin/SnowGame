@@ -6,8 +6,8 @@ import com.evgenyt.snowgame.GameUtils;
  * Rabbit prize
  */
 
-public class PrizeRabbit extends ScreenObject {
+public class PrizeRabbit extends Prize {
     public PrizeRabbit(float x, float y) {
-        super(GameUtils.PRIZE_RABBIT_TEXTURE, x, y);
+        super(x, y, GameUtils.PrizeTypes.RABBIT);
     }
 }

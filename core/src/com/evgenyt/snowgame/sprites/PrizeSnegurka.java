@@ -6,8 +6,8 @@ import com.evgenyt.snowgame.GameUtils;
  * Snegurka prize
  */
 
-public class PrizeSnegurka extends ScreenObject {
+public class PrizeSnegurka extends Prize {
     public PrizeSnegurka(float x, float y) {
-        super(GameUtils.PRIZE_SNEGURKA_TEXTURE, x, y);
+        super(x, y, GameUtils.PrizeTypes.SNEGURKA);
     }
 }

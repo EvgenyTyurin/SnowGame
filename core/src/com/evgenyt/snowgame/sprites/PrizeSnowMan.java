@@ -6,10 +6,10 @@ import com.evgenyt.snowgame.GameUtils;
  * Prize snowman sprite
  */
 
-public class PrizeSnowMan extends ScreenObject {
+public class PrizeSnowMan extends Prize {
 
     public PrizeSnowMan(float x, float y) {
-        super(GameUtils.PRIZE_SNOWMAN_TEXTURE, x, y);
+        super(x, y, GameUtils.PrizeTypes.SNOWMAN);
     }
 
 }

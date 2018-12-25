@@ -29,12 +29,14 @@ public class SnowGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 
+		// Delete prizes on development mode
 		if (GameUtils.DEVELOPMENT) {
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNOWMAN, 0);
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_DEER, 0);
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_RABBIT, 0);
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SANTA, 0);
 			GameUtils.prefs.putInteger(GameUtils.KEY_PRIZE_SNEGURKA, 0);
+			GameUtils.prefs.putString(GameUtils.KEY_PRIZE_TYPE, "");
 			GameUtils.prefs.flush();
 		}
 

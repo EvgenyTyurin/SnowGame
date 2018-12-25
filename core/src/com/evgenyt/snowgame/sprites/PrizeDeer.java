@@ -6,8 +6,8 @@ import com.evgenyt.snowgame.GameUtils;
  * Created by tey on 19.12.2018.
  */
 
-public class PrizeDeer extends ScreenObject {
+public class PrizeDeer extends Prize {
     public PrizeDeer(float x, float y) {
-        super(GameUtils.PRIZE_DEER_TEXTURE, x, y);
+        super(x, y, GameUtils.PrizeTypes.DEER);
     }
 }

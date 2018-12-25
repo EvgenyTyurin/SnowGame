@@ -18,6 +18,9 @@ public class GameUtils {
     // Development mode flag
     static final boolean DEVELOPMENT = true;
 
+    // Type of prizes
+    public static enum PrizeTypes {DEER, RABBIT, SANTA, SNEGURKA, SNOWMAN};
+
     // How much prize initial position elevates
     public static final float prizeAdvance = 0.75f;
 
@@ -40,6 +43,9 @@ public class GameUtils {
     public static final String KEY_PRIZE_SNEGURKA = "PRIZE_SNEGURKA";
     public static final String KEY_PRIZE_DEER = "PRIZE_DEER";
     public static final String KEY_PRIZE_RABBIT = "PRIZE_RABBIT";
+    public static final String KEY_PRIZE_TYPE = "PRIZE_TYPE";
+    public static final String KEY_PRIZE_X = "KEY_PRIZE_X";
+    public static final String KEY_PRIZE_Y = "KEY_PRIZE_Y";
 
     // Textures
     public static final Texture FLAKE_TEXTURE =
@@ -56,6 +62,24 @@ public class GameUtils {
             new Texture(GameUtils.getTextureDir() + "prize_santa.png");
     public static final Texture PRIZE_SNEGURKA_TEXTURE =
             new Texture(GameUtils.getTextureDir() + "prize_snegurka.png");
+
+    // Returns prize texture by type
+    public static Texture getPrizeTexture(PrizeTypes type) {
+        switch (type) {
+            case DEER:
+                return PRIZE_DEER_TEXTURE;
+            case SANTA:
+                return PRIZE_SANTA_TEXTURE;
+            case RABBIT:
+                return PRIZE_RABBIT_TEXTURE;
+            case SNOWMAN:
+                 return PRIZE_SNOWMAN_TEXTURE;
+            case SNEGURKA:
+                return PRIZE_SNEGURKA_TEXTURE;
+            default:
+                return null;
+        }
+    }
 
     // Maximum pause between gifts
     public static int getGiftPauseMax() {

@@ -20,8 +20,6 @@ public class ScreenObject {
     private BitmapFont font;
     private boolean keepTexture = false;
 
-
-
     // New empty object on x,y coordinates
     public ScreenObject(float x, float y) {
         this.x = x;
@@ -179,4 +177,5 @@ public class ScreenObject {
     public BitmapFont getFont() {
         return font;
     }
+
 }

@@ -6,8 +6,8 @@ import com.evgenyt.snowgame.GameUtils;
  * Santa prize
  */
 
-public class PrizeSanta extends ScreenObject {
+public class PrizeSanta extends Prize {
     public PrizeSanta(float x, float y) {
-        super(GameUtils.PRIZE_SANTA_TEXTURE, x, y);
+        super(x, y, GameUtils.PrizeTypes.SANTA);
     }
 }
